@@ -55,7 +55,7 @@ public class BasicSpawner : NetworkBehaviour, INetworkRunnerCallbacks
     {
         if (runner.IsServer)
         {
-            Vector3 spawnPosition = new Vector3((player.RawEncoded % runner.Config.Simulation.DefaultPlayers) * 3, 1, 0);
+            Vector3 spawnPosition = new Vector3((player.RawEncoded % runner.Config.Simulation.DefaultPlayers) * 3, 0, 0);
             NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
             _spawnedCharacters.Add(player, networkPlayerObject);
         }
@@ -84,7 +84,7 @@ public class BasicSpawner : NetworkBehaviour, INetworkRunnerCallbacks
 
         if (Input.GetKey(KeyCode.D))
             data.move += Vector3.right;
-        //data.move = data.move.normalized;
+        data.move = data.move.normalized;
         data.sprint = Input.GetKey(KeyCode.LeftShift);
         data.aiming = Input.GetMouseButton(1);
         

@@ -50,7 +50,6 @@ public class PlayerMovement : NetworkBehaviour
         {
             return;
         }
-        print("Move");
         Move();
         
         GroundCheck();
@@ -71,14 +70,14 @@ public class PlayerMovement : NetworkBehaviour
         if (_currentHorizontalSpeed < _curSpeed - SPEED_OFFSET ||
             _currentHorizontalSpeed > _curSpeed + SPEED_OFFSET)
         {
-            _speed = Mathf.Lerp(_currentHorizontalSpeed, _curSpeed * 0f, Runner.DeltaTime * _speedChangeLate);
+            _speed = Mathf.Lerp(_currentHorizontalSpeed, _curSpeed * 0f, Time.deltaTime * _speedChangeLate);
             _speed = Mathf.Round(_speed * 1000f) / 1000f;
         }
         else
         {
             _speed = _curSpeed;
         }
-        
+        print(_speed +"!!!!!!!!!!!!!!!!");
         // 애니메이션 추가.
         
         //
@@ -98,8 +97,8 @@ public class PlayerMovement : NetworkBehaviour
 
         _targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
-        _cc.Move(_targetDirection.normalized * (_speed * Runner.DeltaTime)
-            + new Vector3(0,_verticalVelocity, 0) * Runner.DeltaTime);
+        _cc.Move(_targetDirection.normalized * (_speed * Time.deltaTime)
+            + new Vector3(0,_verticalVelocity, 0) * Time.deltaTime);
         // 나중에 중력 추가하기.
         
         // 애니메이션 추가
@@ -124,7 +123,7 @@ public class PlayerMovement : NetworkBehaviour
         {
             if (_verticalVelocity < _terminalVelocity)
             {
-                _verticalVelocity += GRAVITY * Runner.DeltaTime;
+                _verticalVelocity += GRAVITY * Time.deltaTime;
             }   
         }
     }
