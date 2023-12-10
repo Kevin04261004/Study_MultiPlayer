@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : NetworkBehaviour
 {
     private float _speed;
     private float _curSpeed;
@@ -18,7 +19,7 @@ public class PlayerMovement : MonoBehaviour
     private float _rotationVelocity;
     private Vector3 _targetDirection;
     private float _verticalVelocity;
-    private float _terminalVelocity = 50f;
+    private readonly float _terminalVelocity = 50f;
     private const float GRAVITY = -15f;
 
     /* Classes Or Property */
@@ -26,8 +27,7 @@ public class PlayerMovement : MonoBehaviour
     private PlayerInput _playerInput;
     #endif
     private PlayerInputs _input;
-    private CharacterController _controller;
-    
+    private NetworkCharacterControllerPrototype _cc;
     /* inspector */
     [SerializeField] private LayerMask _groundLayerMask;
     [SerializeField] private float _speedChangeLate = 10f;
@@ -38,7 +38,7 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         TryGetComponent(out _input);
-        TryGetComponent(out _controller);
+        _cc = GetComponent<NetworkCharacterControllerPrototype>();
 #if ENABLE_INPUT_SYSTEM
         TryGetComponent(out _playerInput);
 #else
@@ -47,14 +47,22 @@ public class PlayerMovement : MonoBehaviour
                 
     }
 
-    private void Update()
+    // private void Update()
+    // {
+    //     Move();
+    //     
+    //     GroundCheck();
+    //     Gravity();
+    // }
+
+    public override void FixedUpdateNetwork()
     {
         Move();
         
         GroundCheck();
         Gravity();
     }
-    
+
     private void Move()
     {
         _curSpeed = _input.sprint ? _sprintSpeed : _moveSpeed;
@@ -63,7 +71,7 @@ public class PlayerMovement : MonoBehaviour
             _curSpeed = 0.0f;
         }
 
-        _velocity = _controller.velocity;
+        _velocity = _cc.Velocity;
         _currentHorizontalSpeed = new Vector3(_velocity.x, 0.0f, _velocity.z).magnitude;
 
         if (_currentHorizontalSpeed < _curSpeed - SPEED_OFFSET ||
@@ -96,7 +104,7 @@ public class PlayerMovement : MonoBehaviour
 
         _targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
-        _controller.Move(_targetDirection.normalized * (_speed * Time.deltaTime)
+        _cc.Move(_targetDirection.normalized * (_speed * Time.deltaTime)
             + new Vector3(0,_verticalVelocity, 0) * Time.deltaTime);
         // 나중에 중력 추가하기.
         
