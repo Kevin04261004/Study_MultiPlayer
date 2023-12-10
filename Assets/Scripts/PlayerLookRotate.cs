@@ -1,22 +1,24 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 
-public class PlayerLookRotate : MonoBehaviour
+public class PlayerLookRotate : NetworkBehaviour
 {
-    private PlayerInputs _input;
+    [SerializeField]private NetworkInputData _data;
     /* inspector */
     [SerializeField] [Range(0f,0.2f)] private float _rotationSmoothTime = 0.12f;
     private float _rotationVelocity;
-    private void Awake()
+    public override void FixedUpdateNetwork()
     {
-        TryGetComponent(out _input);
-    }
+        
+        if (!GetInput(out _data))
+        {
+            return;
+        }
 
-    private void Update()
-    {
-        if (_input.aiming)
+        if (_data.aiming)
         {
             Aiming();
         }
@@ -24,7 +26,7 @@ public class PlayerLookRotate : MonoBehaviour
 
     private void Aiming()
     {
-        Vector3 mousePos = _input.GetMouseScreenPosition();
+        Vector3 mousePos = Input.mousePosition;
         Ray ray = Camera.main.ScreenPointToRay(mousePos);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))

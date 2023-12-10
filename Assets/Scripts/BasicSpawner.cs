@@ -6,10 +6,19 @@ using Fusion.Sockets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[Serializable]
+public struct NetworkInputData : INetworkInput
+{
+    public Vector3 move;
+    public NetworkBool aiming;
+    public NetworkBool sliding;
+    public NetworkBool shoot;
+    public NetworkBool sprint;
+}
+
 public class BasicSpawner : NetworkBehaviour, INetworkRunnerCallbacks
 {
     private NetworkRunner _runner;
-
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
     private async void StartGame(GameMode mode)
@@ -17,12 +26,13 @@ public class BasicSpawner : NetworkBehaviour, INetworkRunnerCallbacks
         _runner = gameObject.AddComponent<NetworkRunner>();
         _runner.ProvideInput = true;
         
-        await _runner.StartGame(new StartGameArgs()
+        await _runner.StartGame(new StartGameArgs
         {
             GameMode = mode,
-            SessionName = "TestRoom",
-            Scene = SceneManager.GetActiveScene().buildIndex,
-            SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
+            SessionName = "TestRoom", // 세션 이름(클라이언트와 서버 세션 이름)
+            Scene = SceneManager.GetActiveScene().buildIndex, // Scene은 구조체인 SceneRef?타입
+            // NetworkSceneManagerDefault : 비동기 씬 관련 메서드가 포함된 클래스
+            SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(), // SceneManager INetworkSceneManager 타입이다.
         });
     }
 
@@ -43,9 +53,12 @@ public class BasicSpawner : NetworkBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        Vector3 spawnPos = new Vector3((player.RawEncoded % runner.Config.Simulation.DefaultPlayers) * 3, 1, 0);
-        NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPos, Quaternion.identity);
-        _spawnedCharacters.Add(player, networkPlayerObject);
+        if (runner.IsServer)
+        {
+            Vector3 spawnPosition = new Vector3((player.RawEncoded % runner.Config.Simulation.DefaultPlayers) * 3, 1, 0);
+            NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
+            _spawnedCharacters.Add(player, networkPlayerObject);
+        }
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
@@ -59,8 +72,29 @@ public class BasicSpawner : NetworkBehaviour, INetworkRunnerCallbacks
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
+        NetworkInputData data = new NetworkInputData();
+        if (Input.GetKey(KeyCode.W))
+            data.move += Vector3.up;
+
+        if (Input.GetKey(KeyCode.S))
+            data.move += Vector3.down;
+
+        if (Input.GetKey(KeyCode.A))
+            data.move += Vector3.left;
+
+        if (Input.GetKey(KeyCode.D))
+            data.move += Vector3.right;
+        //data.move = data.move.normalized;
+        data.sprint = Input.GetKey(KeyCode.LeftShift);
+        data.aiming = Input.GetMouseButton(1);
+        
+        input.Set(data);
     }
 
+    private void PrintData(NetworkInputData data)
+    {
+        Debug.Log($"{data.move}\n {data.aiming}");
+    }
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
     {
     }

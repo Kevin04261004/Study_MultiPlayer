@@ -94,10 +94,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8473162356483424964}
   - component: {fileID: 8473162356483424968}
-  - component: {fileID: 8473162356483424966}
   - component: {fileID: 8473162356483424969}
   - component: {fileID: 8473162356483424965}
-  - component: {fileID: 8473162356483424967}
   - component: {fileID: 8473162356483424970}
   - component: {fileID: 8473162356483424971}
   m_Layer: 0
@@ -142,37 +140,6 @@ CharacterController:
   m_SkinWidth: 0.02
   m_MinMoveDistance: 0
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &8473162356483424966
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8473162356483424961}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: 7901d8328ca427d428902d6177180301,
-    type: 3}
-  m_NotificationBehavior: 0
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents: []
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
-  m_DefaultActionMap: Player
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
 --- !u!114 &8473162356483424969
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185,6 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38a2667f462a089409308d8ec4ca7cdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
   _rotationSmoothTime: 0.12
 --- !u!114 &8473162356483424965
 MonoBehaviour:
@@ -206,22 +174,6 @@ MonoBehaviour:
   _moveSpeed: 8
   _sprintSpeed: 12
   _rotationSmoothTime: 0.12
---- !u!114 &8473162356483424967
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8473162356483424961}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7067c33528706df4e923311dd09343e1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  move: {x: 0, y: 0}
-  jump: 0
-  sprint: 0
-  aiming: 0
 --- !u!114 &8473162356483424970
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -244,6 +196,7 @@ MonoBehaviour:
     RawGuidValue: ee731b35c0cb7d3428b7a76d8d46e120
   NestedObjects: []
   NetworkedBehaviours:
+  - {fileID: 8473162356483424969}
   - {fileID: 8473162356483424965}
   - {fileID: 8473162356483424971}
   SimulationBehaviours: []
