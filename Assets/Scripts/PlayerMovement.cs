@@ -26,7 +26,7 @@ public class PlayerMovement : NetworkBehaviour
     private NetworkCharacterControllerPrototype _cc;
     /* inspector */
     [SerializeField] private LayerMask _groundLayerMask;
-    [SerializeField] private float _speedChangeLate = 10f;
+    [SerializeField] private float _speedChangeLate;
     [SerializeField] private float _moveSpeed;
     [SerializeField] private float _sprintSpeed;
     [SerializeField] [Range(0f,0.2f)] private float _rotationSmoothTime = 0.12f;
@@ -66,18 +66,19 @@ public class PlayerMovement : NetworkBehaviour
 
         _velocity = _cc.Velocity;
         _currentHorizontalSpeed = new Vector3(_velocity.x, 0.0f, _velocity.z).magnitude;
+        print(_currentHorizontalSpeed);
+        
 
         if (_currentHorizontalSpeed < _curSpeed - SPEED_OFFSET ||
             _currentHorizontalSpeed > _curSpeed + SPEED_OFFSET)
         {
-            _speed = Mathf.Lerp(_currentHorizontalSpeed, _curSpeed * 0f, Time.deltaTime * _speedChangeLate);
+            _speed = Mathf.Lerp(_currentHorizontalSpeed, _curSpeed, Runner.DeltaTime * _speedChangeLate);
             _speed = Mathf.Round(_speed * 1000f) / 1000f;
         }
         else
         {
             _speed = _curSpeed;
         }
-        print(_speed +"!!!!!!!!!!!!!!!!");
         // 애니메이션 추가.
         
         //
@@ -97,8 +98,8 @@ public class PlayerMovement : NetworkBehaviour
 
         _targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
-        _cc.Move(_targetDirection.normalized * (_speed * Time.deltaTime)
-            + new Vector3(0,_verticalVelocity, 0) * Time.deltaTime);
+        _cc.Move(_targetDirection.normalized * (_speed *Runner.DeltaTime)
+            + new Vector3(0,_verticalVelocity, 0) *Runner.DeltaTime);
         // 나중에 중력 추가하기.
         
         // 애니메이션 추가
@@ -123,7 +124,7 @@ public class PlayerMovement : NetworkBehaviour
         {
             if (_verticalVelocity < _terminalVelocity)
             {
-                _verticalVelocity += GRAVITY * Time.deltaTime;
+                _verticalVelocity += GRAVITY * Runner.DeltaTime;
             }   
         }
     }

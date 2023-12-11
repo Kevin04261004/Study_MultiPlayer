@@ -212,7 +212,7 @@ MonoBehaviour:
   _groundLayerMask:
     serializedVersion: 2
     m_Bits: 64
-  _speedChangeLate: 10
+  _speedChangeLate: 1
   _moveSpeed: 8
   _sprintSpeed: 12
   _rotationSmoothTime: 0.12
