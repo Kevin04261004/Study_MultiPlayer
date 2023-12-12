@@ -9,7 +9,9 @@ using UnityEngine.SceneManagement;
 [Serializable]
 public struct NetworkInputData : INetworkInput
 {
+    public byte buttons;
     public Vector3 move;
+    public Vector2 mousePos;
     public NetworkBool aiming;
     public NetworkBool sliding;
     public NetworkBool shoot;
@@ -25,7 +27,7 @@ public class BasicSpawner : NetworkBehaviour, INetworkRunnerCallbacks
     {
         _runner = gameObject.AddComponent<NetworkRunner>();
         _runner.ProvideInput = true;
-        
+        gameObject.AddComponent<NetworkPhysicsSimulation3D>();
         await _runner.StartGame(new StartGameArgs
         {
             GameMode = mode,
@@ -84,16 +86,11 @@ public class BasicSpawner : NetworkBehaviour, INetworkRunnerCallbacks
 
         if (Input.GetKey(KeyCode.D))
             data.move += Vector3.right;
-        data.move = data.move.normalized;
         data.sprint = Input.GetKey(KeyCode.LeftShift);
         data.aiming = Input.GetMouseButton(1);
-        
+        data.shoot = Input.GetMouseButton(0);
+        data.mousePos = Input.mousePosition;
         input.Set(data);
-    }
-
-    private void PrintData(NetworkInputData data)
-    {
-        Debug.Log($"{data.move}\n {data.aiming}");
     }
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
     {

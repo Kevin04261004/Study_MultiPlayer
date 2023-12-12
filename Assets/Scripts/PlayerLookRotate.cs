@@ -8,7 +8,7 @@ public class PlayerLookRotate : NetworkBehaviour
 {
     [SerializeField]private NetworkInputData _data;
     /* inspector */
-    [SerializeField] [Range(0f,0.2f)] private float _rotationSmoothTime = 0.12f;
+    [SerializeField] [Range(0f,0.2f)] private float _rotationSmoothTime;
     private float _rotationVelocity;
     public override void FixedUpdateNetwork()
     {
@@ -24,9 +24,9 @@ public class PlayerLookRotate : NetworkBehaviour
         }
     }
 
-    private void Aiming()
+    public void Aiming()
     {
-        Vector3 mousePos = Input.mousePosition;
+        Vector2 mousePos = _data.mousePos;
         Ray ray = Camera.main.ScreenPointToRay(mousePos);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
